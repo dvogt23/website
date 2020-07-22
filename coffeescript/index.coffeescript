@@ -1,0 +1,45 @@
+class Flip
+  constructor: (@el) ->
+    @el = $(@el)
+    @currentStep = 0;
+    console.log("Created new Flip")
+    
+    $('.next').on 'click', $.proxy(@next, this)
+    
+  next: (event) ->
+    if event
+      event.preventDefault()
+    
+    nextStepNum   = @currentStep + 1
+    currentStepEl = @el.find ".step#{@currentStep}"
+    nextStepEl    = @el.find ".step#{nextStepNum}"
+    
+    if nextStepEl.length
+      console.log('we found the next step', nextStepEl)
+      
+      currentStepEl.prev().removeClass 'down'
+      
+      currentStepEl.removeClass 'set'
+      currentStepEl.addClass 'down'
+      
+      nextStepEl.addClass 'set'
+      nextStepEl.removeClass 'down'
+      
+      nextStepEl.next().removeClass 'down'
+      @currentStep++
+      
+    else
+      # reset to 0
+      @el.find(".step").removeClass('set');
+      @el.find(".step#{@currentStep}").addClass('down');
+      @el.find(".step").not(".step#{@currentStep}").removeClass('down');
+      
+      @currentStep = -1
+      @next()
+    
+  
+$ ->
+  f = new Flip(document.getElementById('flipper'))
+  setInterval ( -> 
+    f.next()  
+  ), 1500
